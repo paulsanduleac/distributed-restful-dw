@@ -9,8 +9,16 @@ python app.py
 python app2.py
 python proxy.py
 ```
-Open the following URL in a browser: http://localhost:5003/article/1
-You should see the ID and title of the first article from the database.
+Open a terminal window and send a POST request using curl:
+```
+curl http://localhost:5003/article/10 -d "title=Article Five" -X POST
+```
+
+Open the same URL in a browser: http://localhost:5003/article/5
+You should see the title of the article you just sent earlier.
+
+
+
 
 ### Prerequisities
 
