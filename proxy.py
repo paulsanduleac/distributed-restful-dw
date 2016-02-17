@@ -1,20 +1,22 @@
 from flask import Flask, request, jsonify, make_response
 from flask_restful import Resource, Api
-#from requests import get, post
+from itertools import cycle
+from random import choice
 import requests
-import json, random
+import json
 
+#initialize Flask and Flask_Restful
 app = Flask(__name__)
 api = Api(app)
 
-def balancer():
-    app1='http://localhost:5001'
-    app2='http://localhost:5002'
-    instance=random.choice([app1, app2])
-    return instance
+#define app instances
+app1='http://localhost:5001'
+app2='http://localhost:5002'
+apps=[app1, app2]
+instance=cycle(apps)
 
-URI=balancer()+'/article/'+'1'
-
+URI=next(instance)+'/article/'+'1'
+print URI
 
 @app.errorhandler(404)
 def not_found(error):
@@ -22,7 +24,8 @@ def not_found(error):
 
 class Article(Resource):
     def get(self, aid):
-        URI=balancer()+'/article/'+str(aid)
+        URI=next(instance)+'/article/'+str(aid)
+        print URI
     	r=requests.get(URI)
         return r.json()
 
