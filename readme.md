@@ -3,10 +3,9 @@
 Proof of concept for a RESTful interface on a Cassandra database that stores information about articles (id, title). Multiple instances of the interface are accessed through a proxy. The proxy also acts as a roundrobin load balancer.
 
 ## Usage
-In the distributed-restful-dw directory, run app.py, app2.py and proxy.py in three different terminal windows:
+In the distributed-restful-dw directory, run app.py (as many times as you want) and proxy.py in three different terminal windows:
 ```
 python app.py
-python app2.py
 python proxy.py
 ```
 Open a terminal window and send a POST request using curl:
