@@ -1,11 +1,8 @@
 from cassandra.cluster import Cluster
 from flask import Flask, request, jsonify, make_response
 from flask_restful import Resource, Api
-import socket
-import requests
+import socket, requests, os, atexit
 import settings
-import os
-import atexit
 
 app = Flask(__name__)
 api = Api(app)
@@ -67,7 +64,9 @@ def close_instance(host, port): # notify proxy of instance closing
 
 if __name__ == '__main__':
     settings.instanceport=findport()  #comment this line to use the default port from settings.py
-    print(open_instance(settings.instancehost, settings.instanceport))   
+    print(open_instance(settings.instancehost, settings.instanceport)) 
+
+    #app.debug = True
     app.run(host=settings.instancehost, port=settings.instanceport)
 
 atexit.register(close_instance, settings.instancehost, settings.instanceport)

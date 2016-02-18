@@ -2,18 +2,15 @@ from flask import Flask, request, jsonify, make_response
 from flask_restful import Resource, Api
 from itertools import cycle
 from random import choice
-import requests
-import json
+import requests, json
 import settings
+import redis
 
 #initialize Flask and Flask_Restful
 app = Flask(__name__)
 api = Api(app)
 
-#define app instances
-app1='http://localhost:5001'
-app2='http://localhost:5002'
-apps=[app1, app2]
+apps=[] # we will populate this with incoming data
 instances=cycle(apps)
 
 @app.errorhandler(404)
@@ -67,4 +64,5 @@ api.add_resource(OpenInstance, '/openinstance')
 api.add_resource(CloseInstance, '/closeinstance')
 
 if __name__ == '__main__':
+    app.debug = True
     app.run(host=settings.proxyhost, port=settings.proxyport)

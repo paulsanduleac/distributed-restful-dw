@@ -1,11 +1,11 @@
 # Distributed RESTful data warehouse
 
-Proof of concept for a RESTful interface on a Cassandra database that stores information about articles (id, title). Multiple instances of the interface are accessed through a proxy. The proxy also acts as a roundrobin load balancer.
+Proof of concept for a RESTful interface on a Cassandra database that stores information about articles (id, title). Multiple instances of the interface are accessed through a proxy. The proxy also acts as a roundrobin load balancer and as a cache layer storing cache in a Redis instance.
 
 ## Usage
-In the distributed-restful-dw directory, run app.py (as many times as you want) and proxy.py in three different terminal windows:
+In the distributed-restful-dw directory, run app.py (as many times as you want, each execution starts and instance) and proxy.py in three different terminal windows:
 ```
-python app.py
+python app.py 
 python proxy.py
 ```
 Open a terminal window and send a POST request using curl:
