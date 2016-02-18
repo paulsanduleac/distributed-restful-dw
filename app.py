@@ -50,7 +50,7 @@ def open_instance(host, port): # notify proxy of the new instance
         print 'Instance open - proxy notification sent, response: %d' % response
     return response
 
-def close_instance(host, port): # notify proxy of the new instance
+def close_instance(host, port): # notify proxy of instance closing
     try:
         response = 1
         url = 'http://' + settings.proxyhost + ':' + str(settings.proxyport) + '/closeinstance'
