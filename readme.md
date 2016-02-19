@@ -22,6 +22,7 @@ Open the same URL in a browser: http://localhost:5003/article/5. You should see 
 
 * [Python 2.7.11](http://python.org/)
 * [Apache Cassandra 3.3](http://cassandra.apache.org/)
+* [Redis](https://github.com/MSOpenTech/redis)
 
 ### Installing
 
