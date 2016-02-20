@@ -11,10 +11,17 @@ In the distributed-restful-dw directory, run app.py (as many times as you want, 
 ```
 python proxy.py
 python app.py  (this can be run again to start another instance)
+```
+
+## Demo
+POST and GET requests to the proxy with three instances:
+![](https://media.giphy.com/media/l4KhJkaJN5MiuJWdW/giphy.gif)
 
 ## Basic testing
-```
+
 Open a terminal window and send a POST request using curl:
+
+
 ```
 curl http://localhost:5000/article/5 -d "title=Article Five" -X POST
 ```
