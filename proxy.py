@@ -2,13 +2,14 @@ from flask import Flask, request, jsonify, make_response
 from flask_restful import Resource, Api
 from itertools import cycle
 from random import choice
+from redis import Redis
 import requests, json
 import settings
-import redis
 
 #initialize Flask and Flask_Restful
 app = Flask(__name__)
 api = Api(app)
+redis=Redis("localhost")
 
 apps=[] # we will populate this with incoming data
 instances=cycle(apps)
@@ -19,10 +20,21 @@ def not_found(error):
 
 class Article(Resource): # REST resource, mirrors instance behavior
     def get(self, aid):
-        URI=next(instances)+'/article/'+str(aid)
-        print URI
-    	r=requests.get(URI)
-        return r.json()
+        try:
+            URI=next(instances)+'/article/'+str(aid)
+            print URI
+        except StopIteration:
+            pass
+        
+        cache=redis.get(aid)
+        print cache
+        if cache==None:
+            r=requests.get(URI)
+            r=r.json()
+            redis.set(aid,"testing cache")
+        else:
+            r={"aid": aid, "title": cache, "cached": "1"}
+        return r
 
     def post(self, aid):
 		atitle=request.form['title']
@@ -41,7 +53,8 @@ class OpenInstance(Resource):
         incoming='http://'+host+':'+port
         apps.append(incoming.encode("utf-8")) 
         print 'Received notification of new instance:' + incoming
-        print str(apps)           
+        print str(apps)
+        print '\n'
         return {'status': 'OK'}
 
 class CloseInstance(Resource):
@@ -52,16 +65,30 @@ class CloseInstance(Resource):
         host=request.form['host']
         port=request.form['port']
         incoming='http://'+host+':'+port
-        apps.remove(incoming.encode("utf-8"))
         print 'Received notification of instance closing:' + incoming
-        print '/n'
-        print 'Current list of instances:'
-        print str(apps)           
+        print '\n'
+        try:
+            apps.remove(incoming.encode("utf-8"))
+        except ValueError:
+            print 'Tried to remove an instance, but could not find it in the list.'
+            print '\n'
+        if apps == None:
+            print "No instances recorded."
+        else: 
+            print 'Current list of instances:'
+            print str(apps) 
+        print '\n'  
         return {'status': 'OK'}
+
+class CacheClear(Resource):
+    def get(self):
+        redis.flushdb()
+        return "Cache cleared!"
 
 api.add_resource(Article, '/article/<int:aid>')
 api.add_resource(OpenInstance, '/openinstance')
 api.add_resource(CloseInstance, '/closeinstance')
+api.add_resource(CacheClear, '/cacheclear')
 
 if __name__ == '__main__':
     app.debug = True
