@@ -6,6 +6,7 @@ from redis import Redis
 import requests, json
 import settings
 
+
 #initialize Flask and Flask_Restful
 app = Flask(__name__)
 api = Api(app)
@@ -25,13 +26,16 @@ class Article(Resource): # REST resource, mirrors instance behavior
             print URI
         except StopIteration:
             pass
-        
+        except UnboundLocalError:
+            r="Please set an instance first."
         cache=redis.get(aid)
         print cache
+
         if cache==None:
             r=requests.get(URI)
             r=r.json()
-            redis.set(aid,"testing cache")
+            title=r['title']
+            redis.setex(aid,title,5)
         else:
             r={"aid": aid, "title": cache, "cached": "1"}
         return r
@@ -73,7 +77,7 @@ class CloseInstance(Resource):
             print 'Tried to remove an instance, but could not find it in the list.'
             print '\n'
         if apps == None:
-            print "No instances recorded."
+            print "No instances"
         else: 
             print 'Current list of instances:'
             print str(apps) 
@@ -83,7 +87,7 @@ class CloseInstance(Resource):
 class CacheClear(Resource):
     def get(self):
         redis.flushdb()
-        return "Cache cleared!"
+        return 1
 
 api.add_resource(Article, '/article/<int:aid>')
 api.add_resource(OpenInstance, '/openinstance')
